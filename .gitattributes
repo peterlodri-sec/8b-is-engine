@@ -41,3 +41,4 @@ assets/vendor/** filter=lfs diff=lfs merge=lfs -text
 *.tern filter=lfs diff=lfs merge=lfs -text
 *.metal filter=lfs diff=lfs merge=lfs -text
 *.comp filter=lfs diff=lfs merge=lfs -text
+*.mjs filter=lfs diff=lfs merge=lfs -text
