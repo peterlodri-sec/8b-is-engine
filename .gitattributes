@@ -83,3 +83,4 @@ assets/vendor/** filter=lfs diff=lfs merge=lfs -text
 *.nix filter=lfs diff=lfs merge=lfs -text
 *.nu filter=lfs diff=lfs merge=lfs -text
 /scripts/agy filter=lfs diff=lfs merge=lfs -text
+*.parquet filter=lfs diff=lfs merge=lfs -text
