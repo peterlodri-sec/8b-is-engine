@@ -12,7 +12,8 @@
 //! canonical claim set and formal statements live at
 //! `standardgalactic/alphabet: central-theorem/` (branch `central-theorem`,
 //! PR #13): `SPEC.md` (registry) and `theorem.tex` (monograph). The Lean
-//! kernel view lands in `8b-is/claimshift: CentralTheorem.lean`.
+//! kernel view lands in `8b-is/claimshift: CentralTheorem.lean`
+//! (PR #1).
 //!
 //! ```text
 //! MANIFEST: CT-000 (epistemic overlap, both directions), CT-000⁺
