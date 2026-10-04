@@ -1,0 +1,10 @@
+[package]
+name = "admissibility"
+description = "the central theorem (epistemic overlap): the indistinguishability quotient, the common-action guarantee, the zone keeper as witness instance"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+world-core = { path = "../world-core" }
