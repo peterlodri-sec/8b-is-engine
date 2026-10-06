@@ -136,6 +136,15 @@ fauna stack.
 
 **Play it now:** [sanctuary-floor.html](https://pocoo.vaked.dev/demos/centerfugeq/sanctuary-floor.html) · [plenum-floor.html](https://pocoo.vaked.dev/demos/centerfugeq/plenum-floor.html) · [infinite-floor.html](https://pocoo.vaked.dev/demos/centerfugeq/infinite-floor.html) · [summit-floor.html](https://pocoo.vaked.dev/demos/centerfugeq/summit-floor.html)
 
+### the mini-games lane — Spike Sprint
+
+The door for small games (one door, many lanes) now lives at
+[`games/`](games/) — first seated: **Spike Sprint**, a browser
+endless-runner by [shifulegend](https://github.com/shifulegend/spike-sprint)
+(MIT, vendored verbatim): tap to hop, hold to fly, and a spiked barrel
+that is very patient. The lane's conventions live in
+[`games/README.md`](games/README.md).
+
 ### the floors
 
 Every floor is a pure function of a seed line — the same artifact, every
