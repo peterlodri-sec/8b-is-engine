@@ -11,4 +11,4 @@ Play it from the door: [`../index.html`](../index.html) · standalone:
 [`index.html`](index.html). Zero dependencies, zero external assets —
 it will keep working even if the network doesn't.
 
-*vibe-match: Grimes — Oblivion (Chicago · 2014-07-20)*
+*vibe-match: [Grimes — Oblivion (Chicago · 2014-07-20)](https://youtu.be/jovv_hQJTp0) · qPlatonicLove*

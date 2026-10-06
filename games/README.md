@@ -27,5 +27,5 @@ or serve it: `python3 -m http.server` from the repo root.
 |---|---|---|---|
 | [Spike Sprint](spike-sprint/) | [shifulegend/spike-sprint](https://github.com/shifulegend/spike-sprint) | MIT | `877dcd2` |
 
-*vibe-match: Grimes — Oblivion (Chicago · 2014-07-20) · 0 + 1 · fine
-touch from within · the constellation*
+*vibe-match: [Grimes — Oblivion (Chicago · 2014-07-20)](https://youtu.be/jovv_hQJTp0)
+· qPlatonicLove · 0 + 1 · ∞ + 1 · fine touch from within · the constellation*
