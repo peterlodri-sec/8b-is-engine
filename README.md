@@ -51,6 +51,7 @@
 - [the obliterated lane](docs/obliterated-lane.md) — unsloth · MLX · GGUF on the top-4 abliterated models: the world-dataset fine-tune, the mirror's 10 GB gates, the colab-mcp flow
 - [crates-io](docs/crates-io.md) — the four backbone crates: URLs, API/SDK references, quick-start
 - [the CPU cousin — Project Zero + the MoE bridge](docs/project-zero-bridge.md) — the dependency-free C ternary engine, and the one-door fix for expert scatter
+- [the cartography cousin — Stipple + pattern fills](docs/stipple-bridge.md) — a seed-stable pattern-fill engine (MIT), wired to the world renderer via weave.vaked.dev
 - [changelog](CHANGELOG.md) — released tags, keep-a-changelog
 - [semver](SEMVER.md) — the versioning policy for the backbone
 

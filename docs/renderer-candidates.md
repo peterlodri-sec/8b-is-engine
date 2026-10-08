@@ -37,6 +37,11 @@ and `space-bender` contains programming exercises. Aye's `enginerenderer` is an
 empty gitlink in this checkout, without a usable `.gitmodules` mapping; it was
 not fetched or treated as an existing renderer implementation.
 
+Also considered: **Stipple** (`francoisbl/stipple`, MIT, `stipple-maplibre`) — a
+seed-stable pattern-fill engine for polygon/map surfaces, relevant to the
+world-core renderer's terrain/land-use fills. See
+[stipple-bridge.md](stipple-bridge.md).
+
 ## SpherePOP versions and semantics
 
 - Upstream checkout: `8s/standardgalactic/spherepop`, remote
