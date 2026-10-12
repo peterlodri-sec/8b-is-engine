@@ -1,0 +1,9 @@
+[package]
+name = "spherepop"
+description = "the language cousin: a clean-room Spherepop core: nested bubbles, innermost-first pops as admissible continuation, an append-only history as identity"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
