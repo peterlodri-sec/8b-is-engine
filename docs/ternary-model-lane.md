@@ -114,4 +114,11 @@ python3 -m http.server 8000              # open /client/dream-dashboard.html
 The golden is asserted in the page too — a surface that drifts refuses to
 dream. Three contracts, three machines, one string, and now one dream.
 
+## cousin lanes
+
+- **Project Zero** (`shifulegend/project-zero`) — the dependency-free **C**
+  citizen of this lane: same 4-weights-per-byte ternary packing, same
+  one-scale contract, now fighting **MoE expert scatter** on commodity CPUs.
+  Bridge + fix scaffold: [project-zero-bridge.md](project-zero-bridge.md).
+
 *the constellation · 0 + 1 · fine touch from within · vaked.dev*
