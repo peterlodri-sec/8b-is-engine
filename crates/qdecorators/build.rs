@@ -82,7 +82,7 @@ fn main() {
     }
 
     println!("cargo:rustc-link-search=native={}", out.display());
-    println!("cargo:rustc-link-lib=static=zigkern");
+    println!("cargo:rustc-link-lib=static:+whole-archive,-bundle=zigkern");
     println!("cargo:rustc-cfg=qdecorators_zig");
 }
 
