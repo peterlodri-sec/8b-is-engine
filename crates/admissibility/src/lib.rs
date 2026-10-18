@@ -22,6 +22,7 @@
 //! ```
 
 pub mod keeper_instance;
+pub mod trilogy_instances;
 
 use std::cmp::Ordering;
 use std::collections::HashSet;
