@@ -19,6 +19,7 @@
 //! keeper; the agreement is asserted in tests, so a semantic drift on
 //! either side fails CI.
 
+#[cfg(test)]
 use world_core::fold::{Delta, Keeper, Verdict};
 
 /// The keeper's action vocabulary, keyed to its need type — bit-exact to
@@ -73,6 +74,7 @@ pub fn admissible_actions(h: f64, r: f64, s: f64) -> Vec<&'static str> {
 }
 
 /// one delta, at the keeper's wire: attested needs + an optional action
+#[cfg(test)]
 fn delta(t: u64, h: f64, r: f64, s: f64, action: Option<&str>) -> Delta {
     Delta {
         t,

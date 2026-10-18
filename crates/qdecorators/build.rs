@@ -33,7 +33,7 @@ fn main() {
     // build-obj → `zig ar` — every kernel in zig/ is a citizen (the
     // ternary kernels and the mem8 hypermesh quad share one rlib)
     let mut objs: Vec<PathBuf> = Vec::new();
-    for src in ["zig/kernels.zig", "zig/mem8.zig"] {
+    for (idx, src) in ["zig/kernels.zig", "zig/mem8.zig"].iter().enumerate() {
         let stem = PathBuf::from(src)
             .file_stem()
             .expect("zig stem")
@@ -41,18 +41,15 @@ fn main() {
             .to_string();
         let obj_path = out.join(format!("{stem}.o"));
         let obj_arg = format!("-femit-bin={}", obj_path.display());
-        let compiled = Command::new(&zig)
-            .args([
-                "build-obj",
-                src,
-                "-O",
-                "ReleaseSafe",
-                "-fPIC",
-                "-fcompiler-rt", // __zig_probe_stack + friends: the linker
-                // needs Zig's runtime in the object, never unresolved
-                "-target",
-                &zig_target,
-            ])
+        let mut cmd = Command::new(&zig);
+        cmd.args(["build-obj", src, "-O", "ReleaseSafe", "-fPIC"]);
+        if idx == 0 {
+            // Emit compiler_rt once in kernels.o so mem8.o doesn't duplicate
+            // _sin/_cos/_memcpy/___divti3 across libzigkern.a archive members.
+            cmd.arg("-fcompiler-rt");
+        }
+        let compiled = cmd
+            .args(["-target", &zig_target])
             .arg(&obj_arg)
             .output()
             .expect("run zig build-obj");
