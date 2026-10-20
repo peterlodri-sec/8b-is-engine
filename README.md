@@ -52,7 +52,7 @@
 - [crates-io](docs/crates-io.md) — the four backbone crates: URLs, API/SDK references, quick-start
 - [the CPU cousin — Project Zero + the MoE bridge](docs/project-zero-bridge.md) — the dependency-free C ternary engine, and the one-door fix for expert scatter
 - [the cartography cousin — Stipple + pattern fills](docs/stipple-bridge.md) — a seed-stable pattern-fill engine (MIT), wired to the world renderer via weave.vaked.dev
-- [the language cousin — Spherepop + history as identity](docs/spherepop-bridge.md) — nested bubbles, innermost-first pops as admissible continuation, a clean-room zero-dep core in `crates/spherepop`
+- [the language cousin — Spherepop + history as identity](docs/spherepop-bridge.md) — nested bubbles, innermost-first pops as admissible continuation, a clean-room zero-dep core in `crates/spherepop`, wired into `crates/admissibility` (`spherepop_instance`) as a CT-000 / CT-015 / CT-016 witness
 - [changelog](CHANGELOG.md) — released tags, keep-a-changelog
 - [semver](SEMVER.md) — the versioning policy for the backbone
 

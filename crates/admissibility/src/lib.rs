@@ -22,6 +22,7 @@
 //! ```
 
 pub mod keeper_instance;
+pub mod spherepop_instance;
 pub mod trilogy_instances;
 
 use std::cmp::Ordering;
@@ -116,8 +117,10 @@ where
 
     /// CT-000⁺ — a witness for the no-safe-action corollary: the first pair
     /// `(i, j)` of epistemically indistinguishable worlds whose admissible
-    /// sets are disjoint. `None` means every class overlaps — the premise
-    /// of the theorem holds.
+    /// sets are disjoint, or the endpoints `(first, last)` of the first
+    /// observation class whose full class intersection is empty (e.g. a 3-way
+    /// Helly-style empty intersection where every pair overlaps). `None`
+    /// means every class shares at least one common admissible action.
     pub fn no_safe_action_witness(&self) -> Option<(usize, usize)> {
         for i in 0..self.obs.len() {
             for j in (i + 1)..self.obs.len() {
@@ -126,6 +129,14 @@ where
                 {
                     return Some((i, j));
                 }
+            }
+        }
+        for i in 0..self.obs.len() {
+            if self.common_admissible(i).is_empty() {
+                let class = self.class_of(i);
+                let first = *class.first()?;
+                let last = *class.last()?;
+                return Some((first, last));
             }
         }
         None
@@ -194,6 +205,14 @@ mod tests {
         // singletons
         let one = s(vec![7], vec![vec!['z']]);
         one.assert_ct000();
+        // 3-way Helly-style empty intersection where every pair overlaps
+        let helly = s(
+            vec![0, 0, 0],
+            vec![vec!['a', 'b'], vec!['b', 'c'], vec!['a', 'c']],
+        );
+        helly.assert_ct000();
+        assert_eq!(helly.no_safe_action_witness(), Some((0, 2)));
+        assert_eq!(helly.guaranteeing_policy(), None);
     }
 
     #[test]

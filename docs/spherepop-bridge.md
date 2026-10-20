@@ -68,11 +68,15 @@ against `spherepop-kernel/` fixtures once the licence question is settled.
 
 ## 3. wire — the constellation seam
 
-- **Cousin to** [admissibility](../crates/admissibility/src/lib.rs). There,
-  a deterministic policy is safe iff every indistinguishable world shares an
-  admissible action. Here, the frontier *is* that action set, and refusals
-  are the witnesses. Both say the same thing: *continuation is earned from
-  history*.
+- **Wired into** [admissibility](../crates/admissibility/src/lib.rs) via
+  [`spherepop_instance.rs`](../crates/admissibility/src/spherepop_instance.rs).
+  `structure_from_spheres(&spheres, observe)` maps each `Sphere`'s innermost
+  frontier `Sphere::admissible()` into a `Structure<Obs, BubbleId>`, pinning
+  CT-000 (frontier overlap), CT-000⁺ (coarse popped-count observation blurs
+  which inner bubble remains), CT-015 (admissibility factors through
+  `render()` across distinct pop-order and refusal histories), and CT-016
+  (a refused pop owns an event-log position and shifts `digest()` while
+  leaving `render()` intact).
 - **Cousin to** [the cartography cousin](stipple-bridge.md) and
   [the CPU cousin](project-zero-bridge.md). All three are *one deterministic
   transform*: seed → tile, ternary weights → `i32` accumulator, and now
