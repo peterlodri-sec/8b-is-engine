@@ -22,6 +22,7 @@
 //! ```
 
 pub mod keeper_instance;
+pub mod seed001_instance;
 pub mod spherepop_instance;
 pub mod trilogy_instances;
 
