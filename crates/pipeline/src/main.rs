@@ -118,10 +118,18 @@ async fn run(args: &[String], cfg: &PipelineConfig) {
                     .join(", ")
             );
             println!(
-                "  staged:  {} ({}B, sha256 {}…)",
+                "  admit:   CT-000 ok · sphere={} ({}) · seed001={} · golden {}…",
+                out.receipt.sphere_value,
+                &out.receipt.sphere_digest[..8],
+                out.receipt.seed001_action,
+                &out.receipt.golden_hash[..12]
+            );
+            println!(
+                "  staged:  {} ({}B, sha256 {}…) + {}",
                 out.entry.path,
                 out.entry.bytes,
-                &out.entry.sha256[..12]
+                &out.entry.sha256[..12],
+                out.receipt_entry.path
             );
             if let Some(png) = &out.concept_art {
                 println!("  art:     {}", png.display());

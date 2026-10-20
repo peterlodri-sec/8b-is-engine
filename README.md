@@ -54,6 +54,7 @@
 - [the cartography cousin — Stipple + pattern fills](docs/stipple-bridge.md) — a seed-stable pattern-fill engine (MIT), wired to the world renderer via weave.vaked.dev
 - [the language cousin — Spherepop + history as identity](docs/spherepop-bridge.md) — nested bubbles, innermost-first pops as admissible continuation, a clean-room zero-dep core in `crates/spherepop`, wired into `crates/admissibility` (`spherepop_instance`) as a CT-000 / CT-015 / CT-016 witness
 - [the stock-vs-flow & trilogy witnesses (`seed001_instance` + `trilogy_instances`)](crates/admissibility/src/seed001_instance.rs) — Seed 001 stock-vs-flow maintenance ledger (`MaintainedStockProjection` vs. `FlowOnlyProjection`) and Flyxion's October 2026 Trilogy (`ROE`, `TOH`, `DMA`) wired into `crates/admissibility` (`23/23` tests passing)
+- [the pipeline admissibility gate (`admissibility_gate`)](crates/pipeline/src/admissibility_gate.rs) — wires `crates/admissibility`, `crates/spherepop`, and `crates/world-core` into `crates/pipeline` (`seed → GAIA → cast → keeper fold → spherepop → Seed 001 stock-vs-flow → AdmissibilityReceipt` + SHA-256 `golden_hash` staged alongside the zone manifest; `13/13` pipeline + `23/23` admissibility tests passing)
 - [changelog](CHANGELOG.md) — released tags, keep-a-changelog
 - [semver](SEMVER.md) — the versioning policy for the backbone
 

@@ -11,25 +11,27 @@ use serde_json::json;
 
 /// The layer-1 stage DAG, as a deterministic tri-state graph.
 pub fn stage_dag_json(label: &str) -> String {
-    let nodes: [&str; 7] = [
+    let nodes: [&str; 8] = [
         "gdd-text",
         "deterministic-expander",
         "llm-expander",
         "zone-manifest",
+        "admissibility-gate",
         "concept-art",
         "vision-qa",
         "stage-manifest",
     ];
     // (from, to, w): +1 authoritative, -1 the external lane, 0 optional
-    let edges: [(usize, usize, i8); 8] = [
+    let edges: [(usize, usize, i8); 9] = [
         (0, 1, 1),  // gdd → deterministic: the default truth
         (0, 2, -1), // gdd → llm: the adapter lane only when wired
         (1, 3, 1),  // deterministic → manifest: attested by construction
         (2, 3, -1), // llm → manifest: attested only by the operator's word
-        (3, 4, 0),  // manifest → art: the optional, dark-when-absent lane
-        (4, 5, 0),  // art → vision QA: the eye, when the art lane renders
-        (3, 6, 1),  // manifest → stage: the first attested asset
-        (4, 6, 0),  // art → stage: staged alongside when it rendered
+        (3, 4, 1),  // manifest → admissibility-gate: CT-000 / Seed 001 / Spherepop / Keeper witness
+        (3, 5, 0),  // manifest → art: the optional, dark-when-absent lane
+        (5, 6, 0),  // art → vision QA: the eye, when the art lane renders
+        (4, 7, 1),  // admissibility-gate → stage: admitted manifest + receipt staged
+        (5, 7, 0),  // art → stage: staged alongside when it rendered
     ];
     serde_json::to_string_pretty(&json!({
         "kind": "pipeline-dag",
@@ -54,7 +56,7 @@ mod tests {
         assert_eq!(a, b, "the pipeline's self-graph must be replayable");
         let v: serde_json::Value = serde_json::from_str(&a).unwrap();
         assert_eq!(v["kind"], "pipeline-dag");
-        assert_eq!(v["nodes"].as_array().unwrap().len(), 7);
+        assert_eq!(v["nodes"].as_array().unwrap().len(), 8);
         for e in v["edges"].as_array().unwrap() {
             let w = e.as_array().unwrap()[2].as_i64().unwrap();
             assert!((-1..=1).contains(&w), "tri-state bond only");
@@ -70,6 +72,6 @@ mod tests {
             let arr = e.as_array().unwrap();
             reached.insert(arr[1].as_i64().unwrap());
         }
-        assert_eq!(reached.len(), 6, "the manifest plus every consumer reached");
+        assert_eq!(reached.len(), 7, "the manifest, admissibility gate, and every consumer reached");
     }
 }

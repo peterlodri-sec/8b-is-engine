@@ -6,12 +6,16 @@
 //! determinism by default, the LLM/adapter path only when the operator
 //! wires it, checksums on everything that reaches `assets/staged/`.
 
+pub mod admissibility_gate;
 pub mod asset_gen;
 pub mod dag;
 pub mod gdd_parser;
 pub mod retopo;
 pub mod stager;
 
+pub use admissibility_gate::{
+    adjudicate_tick_trace, gate_zone_tick, verify_receipt, AdmissibilityReceipt,
+};
 use gdd_parser::{CommandExpander, DeterministicExpander, ExpandError, GddExpander, ZoneManifest};
 use stager::{stage_file, StageManifest, StagedEntry};
 use std::path::{Path, PathBuf};
@@ -72,15 +76,18 @@ impl PipelineConfig {
 #[derive(Debug)]
 pub struct PipelineOutput {
     pub manifest: ZoneManifest,
+    pub receipt: AdmissibilityReceipt,
     pub ron_path: PathBuf,
     pub entry: StagedEntry,
+    pub receipt_entry: StagedEntry,
     pub concept_art: Option<PathBuf>,
     pub qa: Option<String>,
 }
 
-/// run_pipeline — the async orchestrator: parse → (art → QA) → stage.
+/// run_pipeline — the async orchestrator: parse → admissibility gate → (art → QA) → stage.
 /// Sequential by design: each stage consumes the previous stage's
-/// attestation; nothing is generated before the brief is admitted.
+/// attestation; nothing is generated or staged before the brief passes the
+/// Central Theorem (`CT-000` / `CT-003` / `CT-015` / `CT-016`) gate.
 pub async fn run_pipeline(
     gdd_text: &str,
     cfg: &PipelineConfig,
@@ -92,6 +99,9 @@ pub async fn run_pipeline(
     let manifest = expander
         .expand(gdd_text)
         .map_err(|e: ExpandError| e.to_string())?;
+
+    // stage 1b: Central Theorem admissibility gate (GAIA + Keeper + Spherepop + Seed 001)
+    let receipt = gate_zone_tick(&manifest, manifest.gaia.t)?;
 
     // stage 2-3: concept art + the eye (the local lanes; dark when absent)
     let mut concept_art = None;
@@ -116,16 +126,21 @@ pub async fn run_pipeline(
         }
     }
 
-    // stage 4: stage the manifest itself as the first attested asset
+    // stage 4: stage the manifest and its admissibility receipt as attested assets
     std::fs::create_dir_all(&cfg.stage_dir).map_err(|e| e.to_string())?;
-    let ron_path = std::env::temp_dir().join(format!(
-        "zone-{}.ron",
-        &manifest.seed_line[..8.min(manifest.seed_line.len())]
-    ));
+    let seed_prefix = &manifest.seed_line[..8.min(manifest.seed_line.len())];
+    let ron_path = std::env::temp_dir().join(format!("zone-{seed_prefix}.ron"));
     let ron_text = ron::ser::to_string_pretty(&manifest, ron::ser::PrettyConfig::default())
         .map_err(|e| e.to_string())?;
     std::fs::write(&ron_path, ron_text).map_err(|e| e.to_string())?;
     let entry = stage_file(&ron_path, &cfg.stage_dir).map_err(|e| e.to_string())?;
+
+    let receipt_tmp_path = std::env::temp_dir().join(format!("receipt-{seed_prefix}.ron"));
+    let receipt_text = ron::ser::to_string_pretty(&receipt, ron::ser::PrettyConfig::default())
+        .map_err(|e| e.to_string())?;
+    std::fs::write(&receipt_tmp_path, receipt_text).map_err(|e| e.to_string())?;
+    let receipt_entry =
+        stage_file(&receipt_tmp_path, &cfg.stage_dir).map_err(|e| e.to_string())?;
 
     // stage the concept art alongside, when it rendered
     if let Some(png) = &concept_art {
@@ -136,7 +151,7 @@ pub async fn run_pipeline(
     // enumerated, not re-staged: an asset already on the stage is only
     // re-checksummed, never copied onto itself (the old pass re-copied
     // every existing file through temp-then-rename on every run).
-    let mut entries = vec![entry.clone()];
+    let mut entries = vec![entry.clone(), receipt_entry.clone()];
     if let Ok(read) = std::fs::read_dir(&cfg.stage_dir) {
         let mut seen: Vec<String> = Vec::new();
         for f in read.flatten() {
@@ -179,8 +194,10 @@ pub async fn run_pipeline(
 
     Ok(PipelineOutput {
         manifest,
+        receipt,
         ron_path,
         entry,
+        receipt_entry,
         concept_art,
         qa,
     })
@@ -197,4 +214,49 @@ pub fn read_manifest(dir: &Path) -> Result<StageManifest, String> {
     let text =
         std::fs::read_to_string(dir.join("stage-manifest.ron")).map_err(|e| e.to_string())?;
     ron::from_str(&text).map_err(|e| e.to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn run_pipeline_stages_manifest_and_admissibility_receipt_deterministically() {
+        let dir_a = std::env::temp_dir().join(format!("pipeline-run-a-{}", std::process::id()));
+        let dir_b = std::env::temp_dir().join(format!("pipeline-run-b-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir_a);
+        let _ = std::fs::remove_dir_all(&dir_b);
+
+        let cfg_a = PipelineConfig {
+            llm_cmd: None,
+            art_lanes: asset_gen::ArtLanes::new(PathBuf::from("nonexistent-sidecar")),
+            stage_dir: dir_a.clone(),
+        };
+        let cfg_b = PipelineConfig {
+            llm_cmd: None,
+            art_lanes: asset_gen::ArtLanes::new(PathBuf::from("nonexistent-sidecar")),
+            stage_dir: dir_b.clone(),
+        };
+
+        let brief = "the sanctuary at dawn, ternary gate active";
+        let out_a = run_pipeline(brief, &cfg_a, false).await.unwrap();
+        let out_b = run_pipeline(brief, &cfg_b, false).await.unwrap();
+
+        assert_eq!(out_a.manifest, out_b.manifest);
+        assert_eq!(out_a.receipt, out_b.receipt);
+        assert!(out_a.receipt.ct000_verified);
+        assert_eq!(out_a.receipt.golden_hash.len(), 64);
+        assert_eq!(out_a.entry.sha256, out_b.entry.sha256);
+        assert_eq!(out_a.receipt_entry.sha256, out_b.receipt_entry.sha256);
+
+        assert_eq!(verify_staged(&cfg_a), Ok(()));
+        assert_eq!(verify_staged(&cfg_b), Ok(()));
+
+        let sm = read_manifest(&dir_a).unwrap();
+        assert!(sm.entries.iter().any(|e| e.path.starts_with("zone-")));
+        assert!(sm.entries.iter().any(|e| e.path.starts_with("receipt-")));
+
+        let _ = std::fs::remove_dir_all(&dir_a);
+        let _ = std::fs::remove_dir_all(&dir_b);
+    }
 }

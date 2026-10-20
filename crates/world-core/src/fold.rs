@@ -36,7 +36,7 @@ const ACTIONS: [(&str, char); 3] = [
 ];
 
 /// The zone's operative state M: last attested needs + last tick per actor.
-#[derive(Default)]
+#[derive(Debug, Clone, Default)]
 pub struct Keeper {
     pub zone: HashMap<String, [f64; 3]>,
     pub last_tick: HashMap<String, u64>,
