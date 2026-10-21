@@ -21,6 +21,7 @@
 //!           CT-016 (commit enforcement vs. visible state — witness).
 //! ```
 
+pub mod governance_trilogy_instances;
 pub mod keeper_instance;
 pub mod seed001_instance;
 pub mod spherepop_instance;
